@@ -56,7 +56,7 @@ class UserController extends Controller
             'repassword'=>'same:password',
             'akses'=>'required',
         ])->validate();
-
+    
        if(!empty($req->password)){
             $field = [
                 'name'=>$req->name,
@@ -76,7 +76,18 @@ class UserController extends Controller
        if($result){
         return redirect()->route('admin.user')->with('result','update');
        } else {
-        return back()->with('result','fail');
+            return back()->with('result','fail');
+       }
+    }
+
+    public function delete(Request $req)
+    {
+       $result = User::find($req->id);
+
+       if ( $result->delete() ) {
+          return back()->with('result','delete');
+       } else {
+            return back()->with('result','fail-delete');
        }
     }
 }
