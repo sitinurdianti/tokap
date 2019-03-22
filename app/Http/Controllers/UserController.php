@@ -53,10 +53,30 @@ class UserController extends Controller
             'name'=>'required|between:3,100',
             'email'=>'required|unique:users,email,'.$req->id,
             'password'=>'nullable|min:6',
-            'repassword'=>'|same:password',
+            'repassword'=>'same:password',
             'akses'=>'required',
         ])->validate();
 
-        return 'Fungsi Update';
+       if(!empty($req->password)){
+            $field = [
+                'name'=>$req->name,
+                'email'=>$req->email,
+                'akses'=>$req->akses,
+                'password'=>bcrypt($req->password),
+            ];
+       } else {
+             $field = [
+                'name'=>$req->name,
+                'email'=>$req->email,
+                'akses'=>$req->akses,
+            ];
+       }
+       $result = User::where('id',$req->id)->update($field);
+
+       if($result){
+        return redirect()->route('admin.user')->with('result','update');
+       } else {
+        return back()->with('result','fail');
+       }
     }
 }
